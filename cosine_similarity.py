@@ -13,3 +13,4 @@ embedding_person_2 = [[6, 2, 3], [4, 5, 1]]
 
 # how similar are these two lists of numbers
 metric = cosine_similarity(embedding_person_1, embedding_person_2)
+print("hello")
