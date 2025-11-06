@@ -27,8 +27,7 @@ def parse_fasta(file_path: str):
     return seq
 
 
-def split_sequence_for_tokenizer(
-        sequence: str, max_length: int, overlap: int = 0) -> list:
+def split_sequence_for_tokenizer(sequence: str, max_length: int) -> list:
     """
     Split a long genome sequence string into a list of substrings each no longer than
     max_length, optionally with overlap between consecutive chunks.
@@ -36,12 +35,10 @@ def split_sequence_for_tokenizer(
     Parameters
     ----------
     sequence : str
-        Raw sequence (may contain newlines). This will be normalized to uppercase.
+        Raw sequence. This will be normalized to uppercase.
     max_length : int
         Maximum length (in characters) of each chunk. Choose this to match the tokenizer's
         maximum input size (or slightly smaller).
-    overlap : int
-        Number of characters to overlap between consecutive chunks (0 = no overlap).
 
     Returns
     -------
@@ -50,21 +47,14 @@ def split_sequence_for_tokenizer(
     """
     if max_length <= 0:
         raise ValueError("max_length must be > 0")
-    if overlap < 0:
-        raise ValueError("overlap must be >= 0")
-    if overlap >= max_length:
-        raise ValueError("overlap must be smaller than max_length")
-
-    # normalize sequence (not sure this is necessary)
-    seq = sequence.replace("\n", "").replace("\r", "").upper()
 
     chunks = []
-    step = max_length - overlap
+    step = max_length
     start = 0
-    seq_len = len(seq)
+    seq_len = len(sequence)
     while start < seq_len:
         end = start + max_length
-        chunks.append(seq[start:end])
+        chunks.append(sequence[start:end])
         start += step
     return chunks
 
