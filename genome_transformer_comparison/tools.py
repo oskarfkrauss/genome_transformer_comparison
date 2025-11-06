@@ -3,7 +3,7 @@ import torch
 
 def parse_fasta(file_path: str):
     '''
-    Parse fasta file (.fna) file into list of strings
+    Parse fasta file (.fna or .fasta) file into list of strings
 
     Parameters
     ----------
@@ -19,7 +19,7 @@ def parse_fasta(file_path: str):
         seq = []
         for line in f:
             line = line.rstrip()
-            # do not parse the header lines
+            # ignore lines containing read headers
             if line.startswith('>'):
                 continue
             else:
@@ -27,7 +27,7 @@ def parse_fasta(file_path: str):
     return seq
 
 
-def get_masked_embedding(tokenizer, model, sequence: str):
+def get_mean_embedding(tokenizer, model, sequence: str):
     '''
     Create an embedding of a genome sequence
 
@@ -48,10 +48,7 @@ def get_masked_embedding(tokenizer, model, sequence: str):
     # process. In our case (for now), it'll be tensor of 1s since we are including every 6-mer
     # string
     tokens = tokenizer(sequence, return_tensors="pt")
-    # input_ids = tokens["input_ids"][0].tolist()
     input_ids = tokens["input_ids"]
-    # print(tokenizer.convert_ids_to_tokens(input_ids))
-    # print(input_ids)
     attention_mask = tokens['attention_mask']
     with torch.no_grad():
         outputs = model(
@@ -67,5 +64,6 @@ def get_masked_embedding(tokenizer, model, sequence: str):
     embeddings = outputs.hidden_states[-1]
     attention_mask = attention_mask.unsqueeze(-1)
     masked_embeddings = embeddings * attention_mask
+    # get the mean embedding for all tokens
     mean_embedding = masked_embeddings.sum(dim=1) / attention_mask.sum(dim=1)
     return mean_embedding.squeeze().numpy()
