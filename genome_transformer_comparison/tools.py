@@ -83,6 +83,7 @@ def get_chunk_embedding(tokenizer, model, sequence: str, device=None):
     input_ids = tokens["input_ids"].to(device)
     attention_mask = tokens['attention_mask']
 
+    # this is some torch logic to put some variables (?) onto GPU accessible memory
     model = model.to(device)
     model.eval()  # ensure evaluation mode
 
