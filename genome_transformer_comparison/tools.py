@@ -81,7 +81,6 @@ def get_chunk_embedding(tokenizer, model, sequence: str, device=None):
     # Tokenize and move to device
     tokens = tokenizer(sequence, return_tensors="pt")
     input_ids = tokens["input_ids"].to(device)
-    attention_mask = tokens['attention_mask']
 
     # this is some torch logic to put some variables (?) onto GPU accessible memory
     model = model.to(device)
@@ -90,7 +89,6 @@ def get_chunk_embedding(tokenizer, model, sequence: str, device=None):
     with torch.no_grad():
         outputs = model(
             input_ids,
-            attention_mask=attention_mask,
             output_hidden_states=True)
 
     # Get last hidden state (remove batch dimension)
