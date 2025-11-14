@@ -1,4 +1,6 @@
+import gc
 import torch
+from transformers import AutoTokenizer, AutoModel
 
 
 def parse_fasta(file_path: str):
@@ -30,7 +32,7 @@ def parse_fasta(file_path: str):
 def split_sequence_for_tokenizer(sequence: str, max_length: int) -> list:
     """
     Split a long genome sequence string into a list of substrings each no longer than
-    max_length, optionally with overlap between consecutive chunks.
+    max_length
 
     Parameters
     ----------
@@ -59,7 +61,8 @@ def split_sequence_for_tokenizer(sequence: str, max_length: int) -> list:
     return chunks
 
 
-def get_chunk_embedding(tokenizer, model, sequence: str, device=None):
+def get_chunk_embedding(
+        tokenizer: AutoTokenizer, model: AutoModel, sequence: str, device=None):
     """
     Create an embedding of a 'chunk' of a genome sequence (on GPU if available).
 
@@ -91,6 +94,15 @@ def get_chunk_embedding(tokenizer, model, sequence: str, device=None):
             input_ids,
             output_hidden_states=True)
 
-    # Get last hidden state (remove batch dimension)
-    embeddings = outputs.hidden_states[-1].squeeze(0)
-    return embeddings.cpu()  # move back to CPU for stacking/mean
+    # Get last hidden state, remove batch dimension, and move back to cpu
+    embeddings = outputs.hidden_states[-1].squeeze(0).cpu
+
+    # clear GPU memory
+    del input_ids
+    del tokens
+    del outputs
+
+    torch.cuda.empty_cache()
+    gc.collect()
+
+    return embeddings

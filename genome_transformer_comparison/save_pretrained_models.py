@@ -18,15 +18,12 @@ def load_and_save_model(model_name: str, model_dir: str):
     model.save_pretrained(os.path.join(PRETRAINED_MODELS_DIR, model_dir, "model"))
 
 
-# 1. Nucleotide model 2.5B
+# 1. Nucleotide model 2.5B (bacteria genome trained)
 load_and_save_model(
     "InstaDeepAI/nucleotide-transformer-2.5b-multi-species", "NucleotideTransformer_2.5B")
 
-# 2. DNABERT-S
+# 2. DNABERT-S (bacteria genome trained)
 load_and_save_model("zhihan1996/DNABERT-S", "DNABERT_S")
 
-# 3. HyenaDNA
+# 3. HyenaDNA (human genome trained, we want this one to not perform well)
 load_and_save_model("LongSafari/hyenadna-medium-160k-seqlen-hf", "HyenaDNA_medium_160k")
-
-# 4. GENA-LM
-load_and_save_model("AIRI-Institute/gena-lm-bert-base", "GENA_LM_base")
