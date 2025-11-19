@@ -81,8 +81,9 @@ def get_chunk_embedding(
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # Tokenize and move to device
-    tokens = tokenizer(sequence, return_tensors="pt")
+    # Tokenize and move to device, truncate the sequnece so that the model can handle the input,
+    # can result in the last few nucleotides (of the whole seq) not being included in the embedding
+    tokens = tokenizer(sequence, return_tensors="pt", truncation=True)
     input_ids = tokens["input_ids"].to(device)
 
     # this is some torch logic to put some variables (?) onto GPU accessible memory
@@ -95,7 +96,7 @@ def get_chunk_embedding(
             output_hidden_states=True)
 
     # Get last hidden state, remove batch dimension, and move back to cpu
-    embeddings = outputs.hidden_states[-1].squeeze(0).cpu
+    embeddings = outputs.hidden_states[-1].squeeze(0).cpu()
 
     # clear GPU memory
     del input_ids
