@@ -15,9 +15,9 @@ from genome_transformer_comparison.configuration import ROOT_DIR, PRETRAINED_MOD
 
 # load pretrained models and tokenizer
 tokenizer = AutoTokenizer.from_pretrained(os.path.join(
-    PRETRAINED_MODELS_DIR, EMBEDDING_CONFIG['transformer_model'], 'tokenizer'))
+    PRETRAINED_MODELS_DIR, 'NucleotideTransformer_2.5B', 'tokenizer'))
 model = AutoModel.from_pretrained(os.path.join(
-    PRETRAINED_MODELS_DIR, EMBEDDING_CONFIG['transformer_model'], 'model'))
+    PRETRAINED_MODELS_DIR, 'NucleotideTransformer_2.5B', 'model'))
 
 # get k of k-mer from the tokenizer
 special_tokens = set(tokenizer.all_special_tokens)
