@@ -17,7 +17,7 @@ from genome_transformer_comparison.configuration import ROOT_DIR
 
 def load_pt_files(file_paths):
     """
-    Load .pt tensors from a list of file paths and return a list of tensors and filenames.
+    Load .pt tensors from a list of file paths and return a list of tensors.
 
     Parameters
     ----------
@@ -221,7 +221,7 @@ def _extract_label_for_plotting(file_path, bacteria_folder):
 
 if __name__ == "__main__":
 
-    cpes_or_imps = 'cpes'
+    cpes_or_imps = 'imps'
     bacteria_names = os.listdir(
         os.path.join(ROOT_DIR, 'outputs', 'whole_genomes', cpes_or_imps))
 
