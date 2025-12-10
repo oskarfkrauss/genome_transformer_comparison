@@ -87,7 +87,8 @@ def plot_cosine_similarity_heatmap(
         csv_outpath = os.path.join(
             results_folder, f'cosine_similarity_{os.path.basename(bacteria_folder)}.csv')
     else:
-        results_folder = os.path.join(ROOT_DIR, 'results', 'whole_genomes', cpes_or_imps)
+        results_folder = os.path.dirname(os.path.dirname(embedding_file_names[0])).replace(
+            'outputs', 'results')
         os.makedirs(results_folder, exist_ok=True)
 
         plot_outpath = os.path.join(results_folder, 'cosine_similarity.pdf')
@@ -175,7 +176,8 @@ def plot_pca_embeddings(
                    for lab in unique_bacteria]
         plt.legend(handles, unique_bacteria, title="Labels", fontsize=10)
 
-        results_folder = os.path.join(ROOT_DIR, 'results', 'whole_genomes', cpes_or_imps)
+        results_folder = os.path.dirname(os.path.dirname(embedding_file_names[0])).replace(
+            'outputs', 'results')
         os.makedirs(results_folder, exist_ok=True)
 
         outpath = os.path.join(results_folder, 'pca_embeddings.pdf')
@@ -221,21 +223,22 @@ def _extract_label_for_plotting(file_path, bacteria_folder):
 
 if __name__ == "__main__":
 
-    cpes_or_imps = 'imps'
+    cpes_or_imps = 'cpes'
+    transformer_model = 'NucleotideTransformer_2.5B'
     bacteria_names = os.listdir(
-        os.path.join(ROOT_DIR, 'outputs', 'whole_genomes', cpes_or_imps))
+        os.path.join(ROOT_DIR, 'outputs', transformer_model, 'whole_genomes', cpes_or_imps))
 
     all_tensor_file_paths = []
 
     for bacteria_name in bacteria_names:
-        bacteria_folder = os.path.join(ROOT_DIR, 'outputs', 'whole_genomes',
-                                       cpes_or_imps, bacteria_name)
+        bacteria_folder = os.path.join(
+            ROOT_DIR, 'outputs', transformer_model, 'whole_genomes', cpes_or_imps, bacteria_name)
 
-        bacteria_tensor_file_names = os.listdir(
-            os.path.join(ROOT_DIR, 'outputs', 'whole_genomes', cpes_or_imps, bacteria_name))
+        bacteria_tensor_file_names = os.listdir(bacteria_folder)
 
         bacteria_tensor_file_paths = [os.path.join(
-            ROOT_DIR, 'outputs', 'whole_genomes', cpes_or_imps, bacteria_name, file_name)
+            ROOT_DIR, 'outputs', transformer_model, 'whole_genomes',
+            cpes_or_imps, bacteria_name, file_name)
             for file_name in bacteria_tensor_file_names]
 
         all_tensor_file_paths.extend(bacteria_tensor_file_paths)
