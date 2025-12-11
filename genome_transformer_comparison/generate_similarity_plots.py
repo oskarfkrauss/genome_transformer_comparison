@@ -223,8 +223,8 @@ def _extract_label_for_plotting(file_path, bacteria_folder):
 
 if __name__ == "__main__":
 
-    cpes_or_imps = 'cpes'
-    transformer_model = 'NucleotideTransformer_2.5B'
+    cpes_or_imps = 'imps'
+    transformer_model = 'DNABERT_S'
     bacteria_names = os.listdir(
         os.path.join(ROOT_DIR, 'outputs', transformer_model, 'whole_genomes', cpes_or_imps))
 
