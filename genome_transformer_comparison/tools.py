@@ -1,4 +1,4 @@
-import gc
+
 import torch
 from transformers import AutoTokenizer, AutoModel
 
@@ -97,13 +97,5 @@ def get_chunk_embedding(
 
     # Get last hidden state, remove batch dimension, and move back to cpu
     embeddings = outputs.hidden_states[-1].squeeze(0).cpu()
-
-    # clear GPU memory
-    del input_ids
-    del tokens
-    del outputs
-
-    torch.cuda.empty_cache()
-    gc.collect()
 
     return embeddings
