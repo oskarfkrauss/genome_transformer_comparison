@@ -15,7 +15,8 @@ def load_and_save_model(model_name: str, model_dir: str):
 
     # Save model & tokenizer
     tokenizer.save_pretrained(os.path.join(PRETRAINED_MODELS_DIR, model_dir, "tokenizer"))
-    model.save_pretrained(os.path.join(PRETRAINED_MODELS_DIR, model_dir, "model"))
+    model.save_pretrained(os.path.join(PRETRAINED_MODELS_DIR, model_dir, "model"),
+                          safe_serialization=False)
 
 
 # 1. Nucleotide model 2.5B (bacteria genome trained)
@@ -27,3 +28,6 @@ load_and_save_model("zhihan1996/DNABERT-S", "DNABERT_S")
 
 # 3. HyenaDNA (human genome trained, we want this one to not perform well)
 load_and_save_model("LongSafari/hyenadna-medium-160k-seqlen-hf", "HyenaDNA_medium_160k")
+
+# 4.ModernBert-DNA-v1-37M-virus (model pretrained using around 15071 viruses)
+load_and_save_model("RaphaelMourad/ModernBert-DNA-v1-37M-virus", "ModernBert_DNA_37M_Virus")
