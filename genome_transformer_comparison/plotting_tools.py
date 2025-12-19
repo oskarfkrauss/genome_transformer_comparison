@@ -8,6 +8,64 @@ from sklearn.decomposition import PCA
 import torch
 import umap
 
+from genome_transformer_comparison.configuration import ROOT_DIR
+
+
+def get_pt_files_dict(transformer_model, whole_genomes_or_plasmids, cpes_or_imps):
+    """
+    Collect paths to embedding tensor files and organize them by bacteria.
+
+    This function scans the directory:
+        ROOT_DIR/outputs/<transformer_model>/<whole_genomes_or_plasmids>/<cpes_or_imps>/
+
+    Each subdirectory is assumed to correspond to a bacterial species and
+    contains embedding tensor files (e.g. `.pt`). For each bacterial species,
+    the full file paths are collected and stored in a dictionary.
+
+    An additional key, 'all', contains a flat list of all tensor file paths
+    across all bacterial species.
+
+    Parameters
+    ----------
+    transformer_model : str
+        Name of the transformer model directory (e.g. 'NucleotideTransformer_2.5B').
+    whole_genomes_or_plasmids : str
+        Dataset type (e.g. 'whole_genomes' or 'plasmids').
+    cpes_or_imps : str
+        Dataset category (e.g. 'cpes' or 'imps').
+
+    Returns
+    -------
+    dict[str, list[str]]
+        A dictionary mapping bacterial species names to lists of full paths
+        to embedding tensor files. The special key 'all' maps to a list
+        containing all tensor file paths across all species.
+
+    Notes
+    -----
+    - The function does not filter files by extension.
+    - The order of files and bacteria depends on the filesystem order.
+    - No validation is performed to ensure directories or files exist.
+    """
+    base_dir = os.path.join(
+        ROOT_DIR, 'outputs', transformer_model, whole_genomes_or_plasmids, cpes_or_imps)
+    bacteria_names = os.listdir(base_dir)
+
+    all_tensor_file_paths = []
+    pt_files_dict = {'all': []}
+
+    for bacteria_name in bacteria_names:
+        bacteria_folder = os.path.join(base_dir, bacteria_name)
+        bacteria_tensor_file_paths = [
+            os.path.join(bacteria_folder, file_name) for file_name in os.listdir(bacteria_folder)
+            ]
+        pt_files_dict[bacteria_name] = bacteria_tensor_file_paths
+        all_tensor_file_paths.extend(bacteria_tensor_file_paths)
+
+    pt_files_dict['all'] = all_tensor_file_paths
+
+    return pt_files_dict
+
 
 def load_pt_files(file_paths):
     """
@@ -367,7 +425,7 @@ def _extract_label_for_plotting(file_path, within_species=False):
     """
     parts = os.path.normpath(file_path).split(os.sep)
 
-    if not within_species:
+    if within_species:
         # Use only the filename
         target = parts[-1]
     else:
